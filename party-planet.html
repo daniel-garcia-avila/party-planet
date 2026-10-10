@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Party Planet</title>
+<style>
+:root{--bg:#fff7f9;--card:#fff;--tx:#3b2a30;--mu:#8a727a;--ac:#d6457a;--bd:#f0d9e0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1519;--card:#2a1d23;--tx:#f5e6eb;--mu:#b89aa5;--ac:#f06fa0;--bd:#43303a}}
+:root[data-theme="dark"]{--bg:#1d1519;--card:#2a1d23;--tx:#f5e6eb;--mu:#b89aa5;--ac:#f06fa0;--bd:#43303a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:0}
+header,.row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+header{margin-bottom:10px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 12px}
+button.p,button.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+button.x{padding:1px 7px;color:var(--mu);border:0;background:none}
+nav{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px}
+nav button{white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.mu{color:var(--mu);font-size:.9rem}
+.tag{display:inline-block;background:var(--ac);color:#fff;border-radius:999px;padding:1px 10px;font-size:.8rem}
+.sum{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:.95rem}
+.tot b{color:var(--ac)}
+.tbl,.sc,.chartw{overflow-x:auto;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td,th{padding:4px 6px;text-align:left;border-bottom:1px solid var(--bd)}
+td.n,th.n{text-align:right;white-space:nowrap}
+.add{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;margin-top:6px}
+.add2{display:grid;grid-template-columns:2fr 1fr auto;gap:6px;margin-top:6px}
+input,select,textarea{font:inherit;width:100%;padding:8px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+dialog{border:1px solid var(--bd);border-radius:16px;background:var(--card);color:var(--tx);width:min(94vw,460px);padding:16px}
+dialog::backdrop{background:#0006}
+label{display:block;font-size:.85rem;color:var(--mu);margin-top:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.empty{text-align:center;color:var(--mu);padding:32px 8px}
+.chip{display:block;width:100%;text-align:left;padding:2px 6px;margin-top:3px;font-size:.78rem;border-radius:6px;background:var(--ac);color:#fff;border:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.pen{background:transparent;color:var(--ac);border:1px dashed var(--ac)}
+.mg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;min-width:560px}
+.dc,.wd{background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:3px;overflow:hidden}
+.dc{min-height:84px}.wd{min-height:150px}
+.dc.out{opacity:.45}.dc.today,.wd.today{outline:2px solid var(--ac)}
+.dn{display:flex;justify-content:space-between;align-items:center;font-size:.8rem}
+.dh{text-align:center;color:var(--mu);font-size:.8rem}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:4px;min-width:860px}
+.yr{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.mini{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-top:4px}
+.mini div{font-size:.7rem;text-align:center;padding:2px 0;border-radius:4px}
+.mini .has{background:var(--ac);color:#fff}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.kpi div{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.kpi b{display:block;font-size:1.15rem;color:var(--ac)}
+.fl{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.leg span{margin-right:12px;font-size:.85rem}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.eu{position:relative;display:block}.eu input{padding-right:26px;-moz-appearance:textfield}.eu input::-webkit-inner-spin-button{display:none}.eu i{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--mu);pointer-events:none}
+.dw{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center}.dbig{width:240px;height:240px}.dsm{width:104px;height:104px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px;text-align:center}.lg div{margin:4px 0;font-size:.9rem}.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.hb{display:grid;grid-template-columns:110px 1fr auto;gap:8px;align-items:center;margin-top:6px;font-size:.9rem}
+.hb div{height:14px;border-radius:7px;background:#e0a43a}
+</style></head><body><main>
+<header><h1>🪐 Party Planet</h1><span class="row"><span class="mu" id="st"></span><button class="p" id="nuevo">+ Nueva reserva</button></span></header>
+<nav id="nav"><button data-a="tab" data-t="ag">Agenda</button><button data-a="tab" data-t="cal">Calendario</button><button data-a="tab" data-t="res">Resumen</button><button data-a="tab" data-t="com">Artículos comunes</button></nav>
+<div id="view"></div>
+<dialog id="dlg"><form method="dialog" id="f">
+<h2 id="dt" style="margin:0 0 4px;font-size:1.1rem">Nueva reserva</h2>
+<label>Cliente<input id="cli" required></label>
+<div class="g2"><label>Fecha<input type="date" id="fec" required></label><label>Hora<input type="time" id="hor"></label></div>
+<label>Lugar del evento<input id="lug"></label>
+<div class="g2"><label>Temática<select id="tem"></select></label><label>Invitados<input type="number" min="0" id="inv"></label></div>
+<label id="otraL" hidden>Otra temática<input id="otra"></label>
+<div class="g2"><label>Precio al cliente (€)<input type="number" step="0.01" min="0" id="pre"></label><label>Estado<select id="est"><option>Pendiente</option><option>Confirmada</option><option>Entregada</option></select></label></div>
+<label>Notas<textarea id="not" rows="2"></textarea></label>
+<div class="row" style="margin-top:14px"><button type="button" id="cancel">Cancelar</button><button class="p" type="submit">Guardar</button></div>
+</form></dialog>
+</main>
+<script>
+const TEMAS=["Unicornios","Princesas","Superhéroes","Safari","Sirenas","Dinosaurios","Boho","Bautizo","Comunión","Otra"];
+const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],DOW=["L","M","X","J","V","S","D"];
+const COL=["#3b82f6","#e5486b","#3aa675"],LAB=["Ingresos","Costes","Beneficio"];
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const mon=d=>addD(d,-((d.getDay()+6)%7));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur=n=>(n||0).toLocaleString("es-ES",{style:"currency",currency:"EUR"});
+const fdate=d=>d?new Date(d+"T00:00").toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"";
+const cost=r=>r.items.reduce((s,i)=>s+i.q*i.c,0);
+let D={res:[],comunes:[]},ref=null,pend=0,tab="ag",abierta=null,editId=null,chain=Promise.resolve();
+const today=iso(new Date()),cal={v:"mes",d:new Date()},flt={per:"total",y:new Date().getFullYear(),m:today.slice(0,7),ev:"all",done:false};
+try{const s=JSON.parse(localStorage.getItem("mesasdulces2")||"null");if(s)D=s;else D.res=JSON.parse(localStorage.getItem("mesasdulces")||"[]")}catch(e){}
+const norm=()=>{D.res=D.res||[];D.comunes=D.comunes||[];D.res.forEach(r=>r.items=r.items||[])};norm();
+const setSt=t=>$("st").textContent=t;
+function save(){
+  try{localStorage.setItem("mesasdulces2",JSON.stringify(D))}catch(e){}
+  if(ref){const snap=JSON.parse(JSON.stringify(D));pend++;chain=chain.then(()=>ref.set(snap)).then(()=>setSt("☁️ Sincronizado")).catch(()=>setSt("⚠️ Sin sincronizar")).finally(()=>{pend--})}
+}
+$("tem").innerHTML=TEMAS.map(t=>`<option>${t}</option>`).join("");
+$("tem").onchange=()=>{$("otraL").hidden=$("tem").value!=="Otra"};
+const evs=k=>D.res.filter(r=>r.fec===k).sort((a,b)=>(a.hor||"").localeCompare(b.hor||""));
+
+function vAg(){
+  const L=[...D.res].sort((a,b)=>(a.fec+a.hor).localeCompare(b.fec+b.hor));
+  if(!L.length)return '<div class="empty">Aún no hay reservas.<br>Pulsa «Nueva reserva» para empezar.</div>';
+  return L.map(r=>{const c=cost(r),open=abierta===r.id;
+  return `<div class="card" id="card-${r.id}"><div class="row"><div><b>${esc(r.cli)}</b><div class="mu">${fdate(r.fec)} ${esc(r.hor)} · ${esc(r.lug)}</div></div><span class="tag">${esc(r.tem)}</span></div>
+  <div class="mu" style="margin-top:4px">${r.inv?r.inv+" invitados · ":""}${esc(r.est)}${r.not?" · "+esc(r.not):""}</div>
+  <div class="sum"><span>Coste: <b>${eur(c)}</b></span><span>Precio: <b>${eur(r.pre)}</b></span><span class="tot">Beneficio: <b>${eur(r.pre-c)}</b></span></div>
+  <div class="row" style="margin-top:10px"><button data-a="tog" data-id="${r.id}">${open?"Ocultar":"Artículos"} (${r.items.length})</button><span><button data-a="edit" data-id="${r.id}">Editar</button> <button data-a="del" data-id="${r.id}">Borrar</button></span></div>
+  ${open?`<div class="tbl"><table><tr><th>Artículo</th><th class="n">Cant.</th><th class="n">Coste ud.</th><th class="n">Total</th><th></th></tr>
+  ${r.items.map((i,k)=>{const co=D.comunes.some(x=>x.n.toLowerCase()===i.n.toLowerCase());return `<tr><td>${esc(i.n)}</td><td class="n">${i.q}</td><td class="n">${eur(i.c)}</td><td class="n">${eur(i.q*i.c)}</td><td class="n"><button class="x" title="${co?"Ya es común":"Guardar como común"}" ${co?"disabled":""} data-a="star" data-id="${r.id}" data-k="${k}">${co?"★":"☆"}</button><button class="x" data-a="rm" data-id="${r.id}" data-k="${k}">✕</button></td></tr>`}).join("")}
+  <tr><th colspan="3">Total artículos</th><th class="n">${eur(c)}</th><th></th></tr></table></div>
+  <select data-a="pick" data-id="${r.id}" style="margin-top:8px"><option value="">Elegir de artículos comunes…</option>${D.comunes.map(x=>`<option value="${x.id}">${esc(x.n)} (${eur(x.c)})</option>`).join("")}</select>
+  <div class="add"><input placeholder="Artículo" id="n${r.id}"><input type="number" min="0" value="1" id="q${r.id}"><input type="number" min="0" step="0.01" placeholder="€ ud." id="c${r.id}"><button class="p" data-a="add" data-id="${r.id}">+</button></div>`:""}</div>`}).join("");
+}
+
+const chip=r=>`<button class="chip ${r.est==="Pendiente"?"pen":""}" data-a="go" data-id="${r.id}" title="${esc(r.cli+" · "+r.tem)}">${esc(r.hor)} ${esc(r.cli)}</button>`;
+function vCal(){
+  const d=cal.d,v=cal.v,y=d.getFullYear(),m=d.getMonth();let t,b;
+  if(v==="sem"){const s=mon(d),e=addD(s,6);t=`${s.getDate()} ${MES[s.getMonth()].slice(0,3)} – ${e.getDate()} ${MES[e.getMonth()].slice(0,3)} ${e.getFullYear()}`;
+    b=`<div class="sc"><div class="wk">${[0,1,2,3,4,5,6].map(i=>{const x=addD(s,i),k=iso(x);return `<div class="wd ${k===today?"today":""}"><div class="dn"><b>${DOW[i]} ${x.getDate()}</b><button class="x" data-a="newd" data-d="${k}">+</button></div>${evs(k).map(chip).join("")}</div>`}).join("")}</div></div>`}
+  else if(v==="mes"){t=MES[m]+" "+y;const f=new Date(y,m,1),s=mon(f),n=Math.ceil(((f.getDay()+6)%7+new Date(y,m+1,0).getDate())/7)*7;let c="";
+    for(let i=0;i<n;i++){const x=addD(s,i),k=iso(x),e=evs(k);c+=`<div class="dc ${x.getMonth()!==m?"out":""} ${k===today?"today":""}"><div class="dn"><span>${x.getDate()}</span><button class="x" data-a="newd" data-d="${k}">+</button></div>${e.slice(0,3).map(chip).join("")}${e.length>3?`<span class="mu">+${e.length-3} más</span>`:""}</div>`}
+    b=`<div class="sc"><div class="mg">${DOW.map(x=>`<div class="dh">${x}</div>`).join("")}${c}</div></div>`}
+  else{t=String(y);const cnt={};D.res.forEach(r=>cnt[r.fec]=(cnt[r.fec]||0)+1);
+    b=`<div class="yr">${MES.map((nm,mi)=>{const f=new Date(y,mi,1),days=new Date(y,mi+1,0).getDate();let c="<div></div>".repeat((f.getDay()+6)%7);
+      for(let i=1;i<=days;i++)c+=`<div class="${cnt[y+"-"+pad(mi+1)+"-"+pad(i)]?"has":""}">${i}</div>`;
+      return `<div class="card" style="margin:0;padding:8px"><button class="x" data-a="goM" data-y="${y}" data-m="${mi}"><b>${nm}</b></button><div class="mini">${c}</div></div>`}).join("")}</div>`}
+  return `<div class="row" style="margin-bottom:8px"><span>${[["sem","Semana"],["mes","Mes"],["año","Año"]].map(([k,l])=>`<button class="${v===k?"on":""}" data-a="cv" data-v="${k}">${l}</button>`).join(" ")}</span>
+  <span><button data-a="prev">‹</button> <button data-a="hoy">Hoy</button> <button data-a="next">›</button></span></div><h2 style="margin:4px 0 8px;font-size:1.1rem;text-transform:capitalize">${t}</h2>${b}`;
+}
+
+const circ=(r,sw,parts)=>{const C=2*Math.PI*r,T=parts.reduce((x,p)=>x+p.v,0);let o=0,h=`<circle cx="50" cy="50" r="${r}" fill="none" stroke-width="${sw}" style="stroke:var(--bd)"/>`;
+  if(T>0)parts.forEach(p=>{const l=C*p.v/T;if(l>0){h+=`<circle cx="50" cy="50" r="${r}" fill="none" stroke-width="${sw}" style="stroke:${p.c}" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-o}" transform="rotate(-90 50 50)"><title>${esc(p.t)}</title></circle>`;o+=l}});return h};
+const rings=(ing,cos)=>circ(44,9,[{v:ing,c:COL[0],t:"Ingresos: "+eur(ing)}])+circ(32,9,[{v:cos,c:COL[1],t:"Costes: "+eur(cos)},{v:Math.max(ing-cos,0),c:COL[2],t:"Beneficio: "+eur(ing-cos)}]);
+const donut=(h,c1,c2,big)=>`<svg viewBox="0 0 100 100" class="${big?"dbig":"dsm"}" role="img" aria-label="Gráfico donut">${h}<text x="50" y="${c2?49:53}" text-anchor="middle" style="fill:var(--tx);font-size:${big?10:9}px;font-weight:700">${esc(c1)}</text>${c2?`<text x="50" y="58" text-anchor="middle" style="fill:var(--mu);font-size:6px">${esc(c2)}</text>`:""}</svg>`;
+const icol=k=>`hsl(${350+k*7},72%,${40+(k*8)%38}%)`;
+function vRes(){
+  const sorted=[...D.res].sort((a,b)=>a.fec.localeCompare(b.fec)),one=flt.ev!=="all"&&D.res.find(r=>r.id===flt.ev);
+  let S=D.res.filter(r=>!flt.done||r.est==="Entregada");
+  if(one)S=[one];else if(flt.per==="año")S=S.filter(r=>r.fec.slice(0,4)==flt.y);else if(flt.per==="mes")S=S.filter(r=>r.fec.slice(0,7)===flt.m);
+  const ing=S.reduce((s,r)=>s+(r.pre||0),0),cos=S.reduce((s,r)=>s+cost(r),0),ben=ing-cos;
+  let ch;
+  if(!S.length)ch='<div class="empty">No hay reservas con estos filtros.</div>';
+  else if(one){
+    ch=one.items.length?`<b>Coste por artículo</b><div class="dw">${donut(circ(40,16,one.items.map((i,k)=>({v:i.q*i.c,c:icol(k),t:i.n+": "+eur(i.q*i.c)}))),eur(cos),"Costes",1)}<div class="lg">${one.items.map((i,k)=>`<div><i style="background:${icol(k)}"></i>${esc(i.n)} · <b>${eur(i.q*i.c)}</b></div>`).join("")}</div></div>`:'<div class="empty">Esta reserva aún no tiene artículos.</div>'}
+  else{let G;const g=(l,a)=>({l,ing:a.reduce((x,r)=>x+(r.pre||0),0),cos:a.reduce((x,r)=>x+cost(r),0)});
+    if(flt.per==="mes")G=S.map(r=>g(r.fec.slice(8)+" "+r.cli.slice(0,9),[r]));
+    else if(flt.per==="año")G=MES.map((n,i)=>g(n,S.filter(r=>+r.fec.slice(5,7)===i+1)));
+    else{const ks=[...new Set(S.map(r=>r.fec.slice(0,7)))].sort();G=ks.map(k=>g(MES[+k.slice(5)-1]+" "+k.slice(0,4),S.filter(r=>r.fec.slice(0,7)===k)))}
+    G=G.filter(x=>x.ing||x.cos);
+    ch=`<div class="leg" style="text-align:center">${LAB.map((l,i)=>`<span><i style="background:${COL[i]}"></i>${l}</span>`).join("")}</div>
+    <div class="dw">${donut(rings(ing,cos),eur(ben),"Beneficio",1)}</div>
+    <div class="mu" style="text-align:center">Anillo exterior: ingresos · Anillo interior: costes y beneficio</div>
+    ${G.length>1?`<div class="minis">${G.map(x=>`<div>${donut(rings(x.ing,x.cos),Math.round(x.ing-x.cos)+" €")}<div class="mu">${esc(x.l)}</div></div>`).join("")}</div>`:""}`}
+  const yrs=[...new Set([new Date().getFullYear(),...D.res.map(r=>+r.fec.slice(0,4))])].sort();
+  return `<div class="card"><div class="fl">
+  <label>Periodo<select data-a="f" data-k="per" ${one?"disabled":""}>${[["total","Total"],["año","Año"],["mes","Mes"]].map(([k,l])=>`<option value="${k}" ${flt.per===k?"selected":""}>${l}</option>`).join("")}</select></label>
+  ${flt.per==="año"?`<label>Año<select data-a="f" data-k="y" ${one?"disabled":""}>${yrs.map(y=>`<option ${y==flt.y?"selected":""}>${y}</option>`).join("")}</select></label>`:""}
+  ${flt.per==="mes"?`<label>Mes<input type="month" value="${flt.m}" data-a="f" data-k="m" ${one?"disabled":""}></label>`:""}
+  <label>Evento<select data-a="f" data-k="ev"><option value="all">Todos</option>${sorted.map(r=>`<option value="${r.id}" ${flt.ev===r.id?"selected":""}>${esc(r.fec)} · ${esc(r.cli)}</option>`).join("")}</select></label></div>
+  <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" data-a="f" data-k="done" ${flt.done?"checked":""}> Contar solo eventos entregados</label></div>
+  <div class="kpi"><div>Ingresos<b>${eur(ing)}</b></div><div>Costes<b>${eur(cos)}</b></div><div>Beneficio<b>${eur(ben)}</b></div><div>Margen<b>${ing?Math.round(ben/ing*100):0}%</b></div><div>Eventos<b>${S.length}</b></div></div>
+  <div class="card" style="margin-top:12px">${ch}</div>`;
+}
+function vCom(){
+  return `<div class="card"><b>Añadir artículo común</b><div class="add2"><input id="cn" placeholder="Artículo"><span class="eu"><input id="cc" type="number" min="0" step="0.01" placeholder="Coste ud."><i>€</i></span><button class="p" data-a="cadd">+</button></div>
+  <div class="mu" style="margin-top:6px">Cambiar el coste aquí no modifica las reservas ya guardadas.</div></div>
+  ${D.comunes.length?D.comunes.map(c=>`<div class="card"><div class="add2" style="margin:0"><input data-a="cn" data-id="${c.id}" value="${esc(c.n)}"><span class="eu"><input data-a="cc" data-id="${c.id}" type="number" min="0" step="0.01" value="${c.c}"><i>€</i></span><button data-a="cdel" data-id="${c.id}">Quitar</button></div></div>`).join(""):'<div class="empty">Aún no hay artículos comunes. Añádelos aquí o con ☆ desde una reserva.</div>'}`;
+}
+function render(){
+  [...$("nav").children].forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
+  $("view").innerHTML={ag:vAg,cal:vCal,res:vRes,com:vCom}[tab]();
+}
+$("nav").onclick=e=>{const b=e.target.closest("button");if(b){tab=b.dataset.t;render()}};
+$("view").onclick=e=>{
+  const b=e.target.closest("button");if(!b||!b.dataset.a)return;
+  const id=b.dataset.id,r=D.res.find(x=>x.id===id),a=b.dataset.a,d=b.dataset.d;
+  if(a==="tog")abierta=abierta===id?null:id;
+  else if(a==="edit")return abrir(r);
+  else if(a==="del"){if(!confirm("¿Borrar la reserva de "+r.cli+"?"))return;D.res=D.res.filter(x=>x.id!==id)}
+  else if(a==="rm")r.items.splice(+b.dataset.k,1);
+  else if(a==="add"){const n=$("n"+id).value.trim(),q=parseFloat($("q"+id).value)||0,c=parseFloat($("c"+id).value)||0;if(!n)return;r.items.push({n,q,c})}
+  else if(a==="star"){const i=r.items[+b.dataset.k];D.comunes.push({id:"c"+Date.now(),n:i.n,c:i.c})}
+  else if(a==="cadd"){const n=$("cn").value.trim();if(!n)return;D.comunes.push({id:"c"+Date.now(),n,c:parseFloat($("cc").value)||0})}
+  else if(a==="cdel"){D.comunes=D.comunes.filter(x=>x.id!==id)}
+  else if(a==="go"){abierta=id;tab="ag";render();$("card-"+id)?.scrollIntoView();return}
+  else if(a==="newd")return abrir(null,d);
+  else if(a==="cv"){cal.v=b.dataset.v;render();return}
+  else if(a==="hoy"){cal.d=new Date();render();return}
+  else if(a==="goM"){cal.d=new Date(+b.dataset.y,+b.dataset.m,1);cal.v="mes";render();return}
+  else if(a==="prev"||a==="next"){const s=a==="next"?1:-1,x=cal.d;cal.d=cal.v==="sem"?addD(x,7*s):cal.v==="mes"?new Date(x.getFullYear(),x.getMonth()+s,1):new Date(x.getFullYear()+s,0,1);render();return}
+  else return;
+  save();render();
+};
+$("view").onchange=e=>{
+  const t=e.target,a=t.dataset.a;if(!a)return;
+  if(a==="pick"){const c=D.comunes.find(x=>x.id===t.value);if(c){$("n"+t.dataset.id).value=c.n;$("c"+t.dataset.id).value=c.c}}
+  else if(a==="cn"||a==="cc"){const c=D.comunes.find(x=>x.id===t.dataset.id);if(!c)return;if(a==="cn")c.n=t.value.trim()||c.n;else c.c=parseFloat(t.value)||0;save()}
+  else if(a==="f"){flt[t.dataset.k]=t.type==="checkbox"?t.checked:t.value;render()}
+};
+function abrir(r,fecha){
+  editId=r?r.id:null;$("dt").textContent=r?"Editar reserva":"Nueva reserva";
+  const t=r&&!TEMAS.includes(r.tem)?"Otra":(r?r.tem:TEMAS[0]);
+  $("cli").value=r?r.cli:"";$("fec").value=r?r.fec:(fecha||"");$("hor").value=r?r.hor:"";$("lug").value=r?r.lug:"";
+  $("tem").value=t;$("otra").value=r&&t==="Otra"?r.tem:"";$("otraL").hidden=t!=="Otra";
+  $("inv").value=r?r.inv:"";$("pre").value=r?r.pre:"";$("est").value=r?r.est:"Pendiente";$("not").value=r?r.not:"";
+  $("dlg").showModal();
+}
+$("nuevo").onclick=()=>abrir(null);
+$("cancel").onclick=()=>$("dlg").close();
+$("f").onsubmit=()=>{
+  const tem=$("tem").value==="Otra"?($("otra").value.trim()||"Otra"):$("tem").value;
+  const d={cli:$("cli").value.trim(),fec:$("fec").value,hor:$("hor").value,lug:$("lug").value.trim(),tem,inv:parseInt($("inv").value)||0,pre:parseFloat($("pre").value)||0,est:$("est").value,not:$("not").value.trim()};
+  if(editId)Object.assign(D.res.find(x=>x.id===editId),d);
+  else{const id="r"+Date.now();D.res.push({id,items:[],...d});abierta=id}
+  save();render();
+};
+setSt("💾 Solo este dispositivo");render();
+(async()=>{try{
+  const db=window.claude&&await claude.use("db");if(!db)return;
+  const r=db.doc("negocio/datos");
+  r.onSnapshot(s=>{
+    if(!ref){ref=r;setSt("☁️ Sincronizado")}
+    if(s.exists){if(s.metadata.hasPendingWrites||pend>0)return;const nd=JSON.parse(JSON.stringify(s.data()));if(JSON.stringify(nd)===JSON.stringify(D))return;D=nd;norm();try{localStorage.setItem("mesasdulces2",JSON.stringify(D))}catch(e){}
+      const ae=document.activeElement;if(!(ae&&$("view").contains(ae)&&/INPUT|SELECT/.test(ae.tagName)))render()}
+    else r.set(JSON.parse(JSON.stringify(D))).catch(()=>{});
+  },()=>setSt("⚠️ Sin sincronizar"));
+}catch(e){}})();
+</script></body></html>
