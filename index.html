@@ -59,7 +59,7 @@ label{display:block;font-size:.85rem;color:var(--mu);margin-top:10px}
 .hb{display:grid;grid-template-columns:110px 1fr auto;gap:8px;align-items:center;margin-top:6px;font-size:.9rem}
 .hb div{height:14px;border-radius:7px;background:#e0a43a}
 </style></head><body><main>
-<header><h1>🪐 Party Planet</h1><span class="row"><span class="mu" id="st"></span><button class="p" id="nuevo">+ Nueva reserva</button></span></header>
+<header><h1>🪐 Party Planet</h1><span class="row"><span class="mu" id="st"></span><button id="out" hidden>Salir</button><button class="p" id="nuevo">+ Nueva reserva</button></span></header>
 <nav id="nav"><button data-a="tab" data-t="ag">Agenda</button><button data-a="tab" data-t="cal">Calendario</button><button data-a="tab" data-t="res">Resumen</button><button data-a="tab" data-t="com">Artículos comunes</button></nav>
 <div id="view"></div>
 <dialog id="dlg"><form method="dialog" id="f">
@@ -73,8 +73,26 @@ label{display:block;font-size:.85rem;color:var(--mu);margin-top:10px}
 <label>Notas<textarea id="not" rows="2"></textarea></label>
 <div class="row" style="margin-top:14px"><button type="button" id="cancel">Cancelar</button><button class="p" type="submit">Guardar</button></div>
 </form></dialog>
+<dialog id="lg"><h2 style="margin:0 0 4px;font-size:1.1rem">🪐 Party Planet</h2><div class="mu">Inicia sesión para ver tu agenda</div>
+<label>Correo<input id="lgm" type="email" autocomplete="username"></label>
+<label>Contraseña<input id="lgp" type="password" autocomplete="current-password"></label>
+<div id="lge" style="color:#e5486b;min-height:1.2em;margin-top:8px;font-size:.9rem"></div>
+<button class="p" id="lgb" type="button" style="width:100%;margin-top:6px">Entrar</button></dialog>
 </main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+// ====== CONFIGURACIÓN DE FIREBASE: pega aquí los datos de tu proyecto ======
+const FIREBASE_CONFIG={
+  apiKey: "AIzaSyDqKxnZPj5JZnU68tZdRL6xUml0fDq_38E",
+  authDomain: "party-planet-app.firebaseapp.com",
+  projectId: "party-planet-app",
+  storageBucket: "party-planet-app.firebasestorage.app",
+  messagingSenderId: "1098157687061",
+  appId: "1:1098157687061:web:5c364201cb99fcb575a91c"
+};
+// ==========================================================================
 const TEMAS=["Unicornios","Princesas","Superhéroes","Safari","Sirenas","Dinosaurios","Boho","Bautizo","Comunión","Otra"];
 const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],DOW=["L","M","X","J","V","S","D"];
 const COL=["#3b82f6","#e5486b","#3aa675"],LAB=["Ingresos","Costes","Beneficio"];
@@ -217,14 +235,28 @@ $("f").onsubmit=()=>{
   save();render();
 };
 setSt("💾 Solo este dispositivo");render();
-(async()=>{try{
-  const db=window.claude&&await claude.use("db");if(!db)return;
-  const r=db.doc("negocio/datos");
-  r.onSnapshot(s=>{
-    if(!ref){ref=r;setSt("☁️ Sincronizado")}
-    if(s.exists){if(s.metadata.hasPendingWrites||pend>0)return;const nd=JSON.parse(JSON.stringify(s.data()));if(JSON.stringify(nd)===JSON.stringify(D))return;D=nd;norm();try{localStorage.setItem("mesasdulces2",JSON.stringify(D))}catch(e){}
-      const ae=document.activeElement;if(!(ae&&$("view").contains(ae)&&/INPUT|SELECT/.test(ae.tagName)))render()}
-    else r.set(JSON.parse(JSON.stringify(D))).catch(()=>{});
-  },()=>setSt("⚠️ Sin sincronizar"));
-}catch(e){}})();
+let unsub=null;
+function iniciarSync(){
+  if(typeof firebase==="undefined"||String(FIREBASE_CONFIG.apiKey).startsWith("PEGA")){setSt("💾 Solo este dispositivo");return}
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const auth=firebase.auth(),fs=firebase.firestore();
+  $("lg").addEventListener("cancel",e=>e.preventDefault());
+  $("lgb").onclick=async()=>{$("lge").textContent="";try{await auth.signInWithEmailAndPassword($("lgm").value.trim(),$("lgp").value)}catch(e){$("lge").textContent="Correo o contraseña incorrectos"}};
+  $("out").onclick=()=>{D={res:[],comunes:[]};try{localStorage.removeItem("mesasdulces2")}catch(e){}render();auth.signOut()};
+  auth.onAuthStateChanged(u=>{
+    if(unsub){unsub();unsub=null}ref=null;
+    if(!u){$("out").hidden=true;setSt("🔒 Sin sesión");if(!$("lg").open)$("lg").showModal();return}
+    if($("lg").open)$("lg").close();$("lgp").value="";$("out").hidden=false;
+    const r=fs.collection("negocios").doc(u.uid);ref={set:d=>r.set(d)};setSt("☁️ Sincronizado");
+    unsub=r.onSnapshot(s=>{
+      if(s.exists){
+        if(s.metadata.hasPendingWrites||pend>0)return;
+        const nd=JSON.parse(JSON.stringify(s.data()));if(JSON.stringify(nd)===JSON.stringify(D))return;
+        D=nd;norm();try{localStorage.setItem("mesasdulces2",JSON.stringify(D))}catch(e){}
+        const ae=document.activeElement;if(!(ae&&$("view").contains(ae)&&/INPUT|SELECT/.test(ae.tagName)))render();
+      }else r.set(JSON.parse(JSON.stringify(D))).catch(()=>setSt("⚠️ Sin sincronizar"));
+    },()=>setSt("⚠️ Sin sincronizar"));
+  });
+}
+iniciarSync();
 </script></body></html>
